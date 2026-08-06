@@ -1213,7 +1213,7 @@ write.csv(MOTU_table_updated, '../../data/MOTU_table_updated.csv', row.names = F
 ### Import metadata
 site_metadata <- read.csv2('../../data/site_metadata.csv')
 
-### Create a long matrix with onr row per site per sample
+### Create a long matrix with one row per site per sample
 site_long <- site_metadata %>%
   select(site = pool, spygen_code_1, spygen_code_2) %>%
   pivot_longer(cols = starts_with('spygen_code'),
