@@ -10,7 +10,7 @@ library(vegan) # beta-diversity analyses
 # ---- 1. Import data ----
 ## 1-1. Presence/Absence matrix (Subset MOTUs)
 ### Restrict MOTU table to samples' columns
-MOTU_table_subset <- read.csv('../../data/MOTU_table_subset.csv')
+MOTU_table_subset <- read.csv('../data/MOTU_table_subset.csv')
 pa_matrix <- MOTU_table_subset %>%
   select(id, starts_with('SPY')) %>% 
   column_to_rownames('id')
@@ -22,12 +22,12 @@ final_matrix <- t(pa_matrix) # transpose matrix to get samples in rows and MOTUs
 
 
 ## 1-2. ASV table
-ASV_table_subset <- read.csv('../../data/ASV_table_final.csv') %>% 
+ASV_table_subset <- read.csv('../data/ASV_table_final.csv') %>% 
   filter(MOTU %in% MOTU_table_subset$id)
 
 
 ## 1-3. Site metadata
-metadata <- read.csv2('../../data/site_metadata.csv') %>%
+metadata <- read.csv2('../data/site_metadata.csv') %>%
   pivot_longer(cols = c(spygen_code_1, spygen_code_2),
                values_to = 'sample') %>% 
   mutate(sample = factor(sample, levels = rownames(final_matrix))) %>%
@@ -173,7 +173,7 @@ Jost_D <- function(MOTU_pa_table, ASV_table, sample_pattern = '^SPY') {
 D <- Jost_D(final_matrix_new, ASV_table_subset)
 
 ### Save the Jost's D distance matrix
-save(D, file = '../../data/beta_GD.Rdata')
+# save(D, file = '../data/beta_GD.Rdata')
 # _____________________________
 
 
@@ -232,7 +232,7 @@ pcoa_df <- pcoa_df %>%
 ## 3-3. Draw ellipsoids around habitats in the PCoA
 ellipse_df <- pcoa_df %>%
   group_split(Habitat) %>% # we divide the dataframe into a list of dataframe (one per habitat)
-  map_dfr(~ {hull <- ellipsoidhull(as.matrix(.x[, c('PCoA1', 'PCoA2')])) # compute the ellipsoid hull for each dataframe
+  map_dfr(~ {hull <- ellipsoidhull(as.matrix(.x[, c("PCoA1", "PCoA2")])) # compute the ellipsoid hull for each dataframe
   pts <- predict(hull) # record the predicted points of the hull
   tibble(X1 = pts[,1],
          X2 = pts[,2],
@@ -274,7 +274,7 @@ INTRA_MOTU_PCoA_Jost_plot
 
 ### Save in pdf
 ggsave(INTRA_MOTU_PCoA_Jost_plot,
-       file = '../../outputs/INTRA_MOTU_PCoA_Jost_plot.pdf',
+       file = '../outputs/INTRA_MOTU_PCoA_Jost_plot.pdf',
        height = 12,
        width = 12,
        unit = 'cm')
@@ -327,7 +327,7 @@ r2_habitat <- sapply(permanovas, function(df){
 mean_r2_habitat <- mean(r2_habitat)
 
 ##### Save in pdf
-pdf('../../outputs/INTRA_MOTU_PCoA_Jost_R2_Habitat_PERMANOVA.pdf',
+pdf('../outputs/INTRA_MOTU_PCoA_Jost_R2_Habitat_PERMANOVA.pdf',
     height = 4,
     width = 6)
 hist(r2_habitat, col = 'skyblue',
@@ -347,7 +347,7 @@ prop_habitat_0.01 <- mean(p_habitat <= 0.01)
 prop_habitat_0.001 <- mean(p_habitat <= 0.001)
 
 ##### Save in pdf
-pdf('../../outputs/INTRA_MOTU_PCoA_Jost_p_Habitat_PERMANOVA.pdf',
+pdf('../outputs/INTRA_MOTU_PCoA_Jost_p_Habitat_PERMANOVA.pdf',
     height = 4,
     width = 6)
 hist(p_habitat, col = 'skyblue', xlim = c(0, 0.1),
@@ -374,7 +374,7 @@ r2_area <- sapply(permanovas, function(df){
 mean_r2_area <- mean(r2_area)
 
 ##### Save in pdf
-pdf('../../outputs/INTRA_MOTU_PCoA_Jost_R2_Area_PERMANOVA.pdf',
+pdf('../outputs/INTRA_MOTU_PCoA_Jost_R2_Area_PERMANOVA.pdf',
     height = 4,
     width = 6)
 hist(r2_area, col = 'skyblue',
@@ -394,7 +394,7 @@ prop_area_0.01 <- mean(p_area <= 0.01)
 prop_area_0.001 <- mean(p_area <= 0.001)
 
 ##### Save in pdf
-pdf('../../outputs/INTRA_MOTU_PCoA_Jost_p_Area_PERMANOVA.pdf',
+pdf('../outputs/INTRA_MOTU_PCoA_Jost_p_Area_PERMANOVA.pdf',
     height = 4,
     width = 6)
 hist(p_area, col = 'skyblue', xlim = c(0, 0.1),
@@ -440,7 +440,6 @@ for (i in seq_len(nboot)){
   
   #### Compute PERMDISP
   habitat_fit <- anova(betadisper(D_sub, meta_sub$Habitat))
-  habitat_fit
   area_fit <- anova(betadisper(D_sub, meta_sub$Area))
   
   #### Record the results
@@ -460,7 +459,7 @@ prop_habitat_0.01 <- mean(p_habitat <= 0.01)
 prop_habitat_0.001 <- mean(p_habitat <= 0.001)
 
 #### Save in pdf
-pdf('../../outputs/INTRA_MOTU_PCoA_Jost_p_Habitat_PERMDISP.pdf',
+pdf('../outputs/INTRA_MOTU_PCoA_Jost_p_Habitat_PERMDISP.pdf',
     height = 4,
     width = 6)
 hist(p_habitat, col = 'skyblue', xlim = c(0, 1),
@@ -487,7 +486,7 @@ prop_area_0.01 <- mean(p_area <= 0.01)
 prop_area_0.001 <- mean(p_area <= 0.001)
 
 #### Save in pdf
-pdf('../../outputs/INTRA_MOTU_PCoA_Jost_p_Area_PERMDISP.pdf',
+pdf('../outputs/INTRA_MOTU_PCoA_Jost_p_Area_PERMDISP.pdf',
     height = 4,
     width = 6)
 hist(p_area, col = 'skyblue', xlim = c(0, 1),
@@ -503,4 +502,119 @@ text(x = 0.1, y = max(hist(p_area, plot = FALSE)$counts) * 0.7,
      labels = paste0('p <= 0.001: ', round(prop_area_0.001, 3)), adj = 0)
 dev.off()
 #### NOTE: The effect of Area is not significant
+
+
+## 5-3. Identify if the significant pattern is explained by one specific habitat
+### 5-3-1. Compute pairwise post-hoc tests for Habitat
+set.seed(2026)
+nboot <- 999
+
+### Create an empty list
+pairwise_permdisps <- vector('list', nboot)
+
+### Perform 999 bootstrap iterations
+for (i in seq_len(nboot)){
+  
+  #### Randomly select one sample per site
+  meta_sub <- metadata_new %>%
+    group_by(pool) %>%
+    slice_sample(n = 1) %>%
+    ungroup()
+  samples <- meta_sub %>% 
+    pull() %>%
+    as.vector()
+  
+  #### Subset the distance matrix to these samples
+  D_sub <- as.dist(as.matrix(D$mean_D_matrix)[samples, samples, drop = FALSE])
+  
+  #### Compute PERMDISP with post-hoc Tukey HSD test
+  habitat_pairwise <- TukeyHSD(betadisper(D_sub, meta_sub$Habitat))
+  
+  #### Record the results
+  pairwise_permdisps[[i]] <- data.frame(p_Sand_Rock = habitat_pairwise$group['Sand-Rock', 'p adj'],
+                                        p_Seaport_Rock = habitat_pairwise$group['Seaport-Rock', 'p adj'],
+                                        p_Seaport_Sand = habitat_pairwise$group['Seaport-Sand', 'p adj'])
+}
+
+### 5-3-2. Check p-value distributions
+#### 5-3-2-1. Sand vs Rock
+p_Sand_Rock <- sapply(pairwise_permdisps, function(df){
+  unlist(select(df, p_Sand_Rock))
+})
+mean_p_Sand_Rock <- mean(p_Sand_Rock)
+prop_Sand_Rock_0.05 <- mean(p_Sand_Rock <= 0.05)
+prop_Sand_Rock_0.01 <- mean(p_Sand_Rock <= 0.01)
+prop_Sand_Rock_0.001 <- mean(p_Sand_Rock <= 0.001)
+
+#### Save in pdf
+pdf('../outputs/INTRA_MOTU_PCoA_Jost_p_Sand_Rock_Tukey.pdf',
+    height = 4,
+    width = 6)
+hist(p_Sand_Rock, col = 'skyblue', xlim = c(0, 1),
+     main = 'Sand-Rock p-value bootstrap distribution', xlab = 'Bootstrapped p-value')
+abline(v = 0.05, col = 'red', lty = 2)
+text(x = 0.055, y = max(hist(p_Sand_Rock, plot = FALSE)$counts) * 1,
+     labels = paste0('Mean p-value: ', round(mean_p_Sand_Rock, 3)), adj = 0)
+text(x = 0.055, y = max(hist(p_Sand_Rock, plot = FALSE)$counts) * 0.9,
+     labels = paste0('p <= 0.05: ', round(prop_Sand_Rock_0.05, 3)), adj = 0)
+text(x = 0.055, y = max(hist(p_Sand_Rock, plot = FALSE)$counts) * 0.8,
+     labels = paste0('p <= 0.01: ', round(prop_Sand_Rock_0.01, 3)), adj = 0)
+text(x = 0.055, y = max(hist(p_Sand_Rock, plot = FALSE)$counts) * 0.7,
+     labels = paste0('p <= 0.001: ', round(prop_Sand_Rock_0.001, 3)), adj = 0)
+dev.off()
+#### NOTE: The difference between Sand and Rock is not significant
+
+#### 5-3-2-2. Seaport vs Rock
+p_Seaport_Rock <- sapply(pairwise_permdisps, function(df){
+  unlist(select(df, p_Seaport_Rock))
+})
+mean_p_Seaport_Rock <- mean(p_Seaport_Rock)
+prop_Seaport_Rock_0.05 <- mean(p_Seaport_Rock <= 0.05)
+prop_Seaport_Rock_0.01 <- mean(p_Seaport_Rock <= 0.01)
+prop_Seaport_Rock_0.001 <- mean(p_Seaport_Rock <= 0.001)
+
+#### Save in pdf
+pdf('../outputs/INTRA_MOTU_PCoA_Jost_p_Seaport_Rock_Tukey.pdf',
+    height = 4,
+    width = 6)
+hist(p_Seaport_Rock, col = 'skyblue', xlim = c(0, 1),
+     main = 'Seaport-Rock p-value bootstrap distribution', xlab = 'Bootstrapped p-value')
+abline(v = 0.05, col = 'red', lty = 2)
+text(x = 0.055, y = max(hist(p_Seaport_Rock, plot = FALSE)$counts) * 1,
+     labels = paste0('Mean p-value: ', round(mean_p_Seaport_Rock, 3)), adj = 0)
+text(x = 0.055, y = max(hist(p_Seaport_Rock, plot = FALSE)$counts) * 0.9,
+     labels = paste0('p <= 0.05: ', round(prop_Seaport_Rock_0.05, 3)), adj = 0)
+text(x = 0.055, y = max(hist(p_Seaport_Rock, plot = FALSE)$counts) * 0.8,
+     labels = paste0('p <= 0.01: ', round(prop_Seaport_Rock_0.01, 3)), adj = 0)
+text(x = 0.055, y = max(hist(p_Seaport_Rock, plot = FALSE)$counts) * 0.7,
+     labels = paste0('p <= 0.001: ', round(prop_Seaport_Rock_0.001, 3)), adj = 0)
+dev.off()
+#### NOTE: The difference between Seaport and Rock is not significant
+
+#### 5-3-2-3. Seaport vs Sand
+p_Seaport_Sand <- sapply(pairwise_permdisps, function(df){
+  unlist(select(df, p_Seaport_Sand))
+})
+mean_p_Seaport_Sand <- mean(p_Seaport_Sand)
+prop_Seaport_Sand_0.05 <- mean(p_Seaport_Sand <= 0.05)
+prop_Seaport_Sand_0.01 <- mean(p_Seaport_Sand <= 0.01)
+prop_Seaport_Sand_0.001 <- mean(p_Seaport_Sand <= 0.001)
+
+#### Save in pdf
+pdf('../outputs/INTRA_MOTU_PCoA_Jost_p_Seaport_Sand_Tukey.pdf',
+    height = 4,
+    width = 6)
+hist(p_Seaport_Sand, col = 'skyblue', xlim = c(0, 1),
+     main = 'Seaport-Sand p-value bootstrap distribution', xlab = 'Bootstrapped p-value')
+abline(v = 0.05, col = 'red', lty = 2)
+text(x = 0.055, y = max(hist(p_Seaport_Sand, plot = FALSE)$counts) * 1,
+     labels = paste0('Mean p-value: ', round(mean_p_Seaport_Sand, 3)), adj = 0)
+text(x = 0.055, y = max(hist(p_Seaport_Sand, plot = FALSE)$counts) * 0.9,
+     labels = paste0('p <= 0.05: ', round(prop_Seaport_Sand_0.05, 3)), adj = 0)
+text(x = 0.055, y = max(hist(p_Seaport_Sand, plot = FALSE)$counts) * 0.8,
+     labels = paste0('p <= 0.01: ', round(prop_Seaport_Sand_0.01, 3)), adj = 0)
+text(x = 0.055, y = max(hist(p_Seaport_Sand, plot = FALSE)$counts) * 0.7,
+     labels = paste0('p <= 0.001: ', round(prop_Seaport_Sand_0.001, 3)), adj = 0)
+dev.off()
+#### NOTE: The difference between Seaport and Sand is significant *
 # _____________________
